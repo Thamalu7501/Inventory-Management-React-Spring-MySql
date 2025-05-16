@@ -16,7 +16,7 @@ const Login = () => {
     const handleSubmit = () => console.log('login')
     return (
         <Container maxWidth="xs">
-            <Paper elevation={10} sx={{ marginTop: 8, padding: 2 }}>
+            <Paper elevation={10} sx={{ marginTop: 15, padding: 2 }}>
                 <Avatar sx={{
                     mx: "auto",
                     bgcolor: "secondary.main",
@@ -40,9 +40,8 @@ const Login = () => {
                             sx={{ mt: 1 }}>
                             <TextField
                                 id='username'
-                                placeholder="Enter username"
+                                label="Username"
                                 fullWidth
-                                required
                                 autoFocus
                                 sx={{ mb: 2 }} />
                             {errors.username && touched.username && (
@@ -50,9 +49,8 @@ const Login = () => {
                             )}
                             <TextField
                                 id='password'
-                                placeholder="Enter password"
+                                label="Password"
                                 fullWidth
-                                required
                                 type='password' />
 
                             {errors.password && touched.password && (
@@ -66,7 +64,7 @@ const Login = () => {
                 </Formik>
                 <Grid container justifyContent="space-between" sx={{ mt: 1 }}>
                     <Grid item>
-                        <Link component={RouterLink} to="/forgot" >Forgot Password ?</Link>
+                        <Link component={RouterLink} to="/forgotpass" >Forgot Password ?</Link>
                     </Grid>
                     <Grid item>
                         <Link component={RouterLink} to="/signup" >Sign up</Link>
@@ -77,4 +75,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default Login;
