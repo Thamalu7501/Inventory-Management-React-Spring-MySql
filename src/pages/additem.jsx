@@ -6,10 +6,14 @@ import {
 import AddCircleOutlinedIcon from '@mui/icons-material/AddCircleOutlined';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 const Additem = () => {
+  const navigate = useNavigate();
   const fileInputRef = useRef(null);
   const [fileName, setFileName] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
 
   const validationSchema = Yup.object({
     itemId: Yup.string().required('Item ID is required'),
@@ -28,25 +32,47 @@ const Additem = () => {
       itemDetails: '',
     },
     validationSchema: validationSchema,
-    onSubmit: (values) => {
-      alert(JSON.stringify(values, null, 2));
+
+    onSubmit: async (values, { resetForm }) => {
+      try {
+        const formData = new FormData();
+        formData.append('itemId', values.itemId);
+        formData.append('itemName', values.itemName);
+        formData.append('itemQty', values.itemQty);
+        formData.append('itemCategory', values.itemCategory);
+        formData.append('itemDetails', values.itemDetails);
+        formData.append('itemImage', selectedFile);
+
+        const response = await axios.post('http://localhost:8080/inventory', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+
+        console.log(response.data);
+        alert('Item added successfully!');
+        resetForm();
+        setFileName('');
+        setSelectedFile(null);
+      } catch (error) {
+        console.error('Error adding item:', error);
+        alert('Failed to add item.');
+      }
     },
   });
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    if (file) setFileName(file.name);
+    if (file) {
+      setFileName(file.name);
+      setSelectedFile(file);
+    }
   };
 
   return (
     <Container maxWidth="xs">
       <Paper elevation={10} sx={{ marginTop: 15, padding: 2, marginBottom: 15 }}>
-        <Avatar sx={{
-          mx: "auto",
-          bgcolor: "secondary.main",
-          textAlign: "center",
-          mb: "1",
-        }}>
+        <Avatar sx={{ mx: "auto", bgcolor: "secondary.main", textAlign: "center", mb: "1" }}>
           <AddCircleOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5" sx={{ textAlign: "center" }}>
@@ -108,9 +134,7 @@ const Additem = () => {
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
             >
-              <MenuItem value=""disabled>
-                Categories
-              </MenuItem>
+              <MenuItem value="" disabled>Categories</MenuItem>
               <MenuItem value="Garment">Garment</MenuItem>
               <MenuItem value="Sports">Sports</MenuItem>
               <MenuItem value="Household">Household</MenuItem>
